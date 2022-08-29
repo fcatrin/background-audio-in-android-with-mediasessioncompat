@@ -5,7 +5,7 @@ import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 mMediaControllerCompat = new MediaControllerCompat(MainActivity.this, mMediaBrowserCompat.getSessionToken());
                 mMediaControllerCompat.registerCallback(mMediaControllerCompatCallback);
-                setSupportMediaController(mMediaControllerCompat);
-                getSupportMediaController().getTransportControls().playFromMediaId(String.valueOf(R.raw.warner_tautz_off_broadway), null);
+                MediaControllerCompat.setMediaController(MainActivity.this, mMediaControllerCompat);
+                MediaControllerCompat.getMediaController(MainActivity.this).getTransportControls().playFromMediaId(String.valueOf(R.raw.warner_tautz_off_broadway), null);
 
             } catch( RemoteException e ) {
 
@@ -77,11 +77,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if( mCurrentState == STATE_PAUSED ) {
-                    getSupportMediaController().getTransportControls().play();
+                    MediaControllerCompat.getMediaController(MainActivity.this).getTransportControls().play();
                     mCurrentState = STATE_PLAYING;
                 } else {
-                    if( getSupportMediaController().getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
-                        getSupportMediaController().getTransportControls().pause();
+                    if( MediaControllerCompat.getMediaController(MainActivity.this).getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
+                        MediaControllerCompat.getMediaController(MainActivity.this).getTransportControls().pause();
                     }
 
                     mCurrentState = STATE_PAUSED;
@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if( getSupportMediaController().getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
-            getSupportMediaController().getTransportControls().pause();
+        if( MediaControllerCompat.getMediaController(MainActivity.this).getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
+            MediaControllerCompat.getMediaController(MainActivity.this).getTransportControls().pause();
         }
 
         mMediaBrowserCompat.disconnect();
